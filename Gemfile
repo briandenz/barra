@@ -54,6 +54,9 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  # Ruby LSP 
+  gem 'ruby-lsp'
+  gem 'rubocop'
 end
 
 group :test do
@@ -75,3 +78,7 @@ gem "pundit", "~> 2.5"
 gem "kaminari", "~> 1.2"
 
 gem "sidekiq", "~> 8.0"
+
+gem "rgeo"
+
+gem "rgeo-geojson"
