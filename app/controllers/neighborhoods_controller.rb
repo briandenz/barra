@@ -23,16 +23,34 @@ class NeighborhoodsController < ApplicationController
   end
 
   def stores
-    neighborhood_ids = params[:ids].split(',')
-    neighborhoods = Neighborhood.where(id: neighborhood_ids)
+    neighborhood_ids = params[:ids].to_s.split(',')
 
-    #Mock data
-    stores = [
-      { id: 1, name: "Whole Foods Market", address: "123 Main St", neighborhood_name: "Downtown" },
-      { id: 2, name: "Trader Joe's", address: "456 Oak Ave", neighborhood_name: "Uptown" },
-      { id: 3, name: "Safeway", address: "789 Pine St", neighborhood_name: "Downtown" }
-    ]
+    if neighborhood_ids.empty?
+      return render json: { stores: [] }
+    end
+    begin
+      #Collect grocery stores from all selected neighborhoods
+      all_stores = []
 
-    render json: { stores: stores } 
+      Neighborhood.where(id: neighborhood_ids).each do |neighborhood|
+        neighborhood_stores = neighborhood.grocery_stores
+
+        if neighborhood_stores.is_a?(Array)
+          neighborhood_stores.each do |store| 
+            store[:neighborhood_name] = neighborhood.name
+          end
+
+          all_stores.concat(neighborhood_stores)
+        end
+      end
+
+      unique_stores = all_stores.uniq { |store| store[:id] }
+
+      render json: { stores: unique_stores } 
+    rescue => e 
+      Rails.logger.error "Error in stores action: #{e.message}"
+      render json: { error: "Error fetching stores", stores: [] }
+    end
   end
 end
+
