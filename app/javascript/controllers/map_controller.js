@@ -176,6 +176,7 @@ export default class extends Controller {
             li.className = 'list-group-item'
             li.innerHTML = `
                 <strong>${store.name}</strong><br>
+                ${store.type}<br>
                 ${store.address}<br>
                 <small class="text-muted">Neighborhood: ${store.neighborhood_name}</small>
               `
